@@ -3,14 +3,14 @@ function handleInitialState()
 	MumbleSetTalkerProximity(voiceModeData[1] + 0.0)
 	MumbleClearVoiceTarget(voiceTarget)
 	MumbleSetVoiceTarget(voiceTarget)
-	MumbleSetVoiceChannel(LocalPlayer.state.assignedChannel)
+	MumbleSetVoiceChannel(playerServerId)
 
-	while MumbleGetVoiceChannelFromServerId(playerServerId) ~= LocalPlayer.state.assignedChannel do
+	while MumbleGetVoiceChannelFromServerId(playerServerId) ~= playerServerId do
 		Wait(250)
-		MumbleSetVoiceChannel(LocalPlayer.state.assignedChannel)
+		MumbleSetVoiceChannel(playerServerId)
 	end
 
-	MumbleAddVoiceTargetChannel(voiceTarget, LocalPlayer.state.assignedChannel)
+	MumbleAddVoiceTargetChannel(voiceTarget, playerServerId)
 
 	addNearbyPlayers()
 end
