@@ -198,7 +198,7 @@ RegisterCommand('+radioglobaltalk', function()
 		if radioChannel > 0 then
 			logger.info('[radio] Start broadcasting, update targets and notify server.')
 			playerTargets(LocalPlayer.state['global_radio'] or {}, MumbleIsPlayerTalking(PlayerId()) and callData or {})
-			TriggerServerEvent('pma-voice:setTalkingOnRadio', true)
+			TriggerServerEvent('pma-voice:setTalkingOnRadio', true, LocalPlayer.state['global_radio'])
 			radioPressed = true
 			playMicClicks(true)
 			if GetConvarInt('voice_enableRadioAnim', 0) == 1 and not (GetConvarInt('voice_disableVehicleRadioAnim', 0) == 1 and IsPedInAnyVehicle(PlayerPedId(), false)) and not disableRadioAnim then
