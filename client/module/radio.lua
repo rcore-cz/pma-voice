@@ -104,7 +104,6 @@ RegisterNetEvent('pma-voice:removePlayerFromRadio', removePlayerFromRadio)
 ---@param channel number the channel to set the player to, or 0 to remove them.
 function setRadioChannel(channel)
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
-	print(channelsDisabled[tonumber(channel)], LocalPlayer.state['radio_allowed'])
 	if channelsDisabled[tonumber(channel)] then
 		if not LocalPlayer.state['radio_allowed'] then
 			return
