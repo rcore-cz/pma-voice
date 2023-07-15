@@ -1,6 +1,7 @@
 local radioChannel = 0
 local radioNames = {}
 local disableRadioAnim = false
+local channelsDisabled = {}
 
 --- event syncRadioData
 --- syncs the current players on the radio to the client
@@ -102,8 +103,13 @@ RegisterNetEvent('pma-voice:removePlayerFromRadio', removePlayerFromRadio)
 --- sets the local players current radio channel and updates the server
 ---@param channel number the channel to set the player to, or 0 to remove them.
 function setRadioChannel(channel)
-	TriggerEvent('dispatch:client:frequencyChanged', channel)
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
+	print(channelsDisabled[tonumber(channel)], LocalPlayer.state['radio_allowed'])
+	if channelsDisabled[tonumber(channel)] then
+		if not LocalPlayer.state['radio_allowed'] then
+			return
+		end
+	end
 	type_check({ channel, "number" })
 	TriggerServerEvent('pma-voice:setPlayerRadio', channel)
 	radioChannel = channel
@@ -249,3 +255,11 @@ function syncRadio(_radioChannel)
 end
 
 RegisterNetEvent('pma-voice:clSetPlayerRadio', syncRadio)
+
+RegisterNetEvent('rcore_dispatch:client:sendBlacklistChannels', function(data)
+	for _, val in pairs(data) do
+		for _, channel in pairs(val.Units) do
+			channelsDisabled[tonumber(channel[2])] = true
+		end
+	end
+end)

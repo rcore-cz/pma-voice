@@ -56,7 +56,6 @@ function addPlayerToRadio(source, radioChannel)
 		return TriggerClientEvent('pma-voice:removePlayerFromRadio', source, source)
 	end
 	logger.verbose('[radio] Added %s to radio %s', source, radioChannel)
-
 	-- check if the channel exists, if it does set the varaible to it
 	-- if not create it (basically if not radiodata make radiodata)
 	radioData[radioChannel] = radioData[radioChannel] or {}
