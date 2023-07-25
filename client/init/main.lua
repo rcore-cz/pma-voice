@@ -16,7 +16,7 @@ submixIndicies = {}
 ---@param volume number between 0 and 100
 ---@param volumeType string the volume type (currently radio & call) to set the volume of (opt)
 function setVolume(volume, volumeType)
-	type_check({volume, "number"})
+	type_check({ volume, "number" })
 	local volume = volume / 100
 	if volumeType then
 		local volumeTbl = volumes[volumeType]
@@ -95,9 +95,9 @@ if gameVersion == 'fivem' then
 	-- the callback is sent the effectSlot it can register to, not sure if this is needed, but its here for safety
 	exports("registerCustomSubmix", function(callback)
 		local submixTable = callback()
-		type_check({submixTable, "table"})
+		type_check({ submixTable, "table" })
 		local submixName, submixId = submixTable[1], submixTable[2]
-		type_check({submixName, "string"}, {submixId, "number"})
+		type_check({ submixName, "string" }, { submixId, "number" })
 		logger.info("Creating submix %s with submixId %s", submixName, submixId)
 		submixIndicies[submixName] = submixId
 	end)
@@ -109,7 +109,7 @@ end
 ---@param type string either "call" or "radio"
 ---@param effectId number submix id returned from CREATE_AUDIO_SUBMIX
 exports("setEffectSubmix", function(type, effectId)
-	type_check({type, "string"}, {effectId, "number"})
+	type_check({ type, "string" }, { effectId, "number" })
 	if submixIndicies[type] then
 		submixIndicies[type] = effectId
 	end
@@ -191,7 +191,7 @@ end
 ---@diagnostic disable-next-line: undefined-doc-param
 ---@param targets table expects multiple tables to be sent over
 function playerTargets(...)
-	local targets = {...}
+	local targets = { ... }
 	local addedPlayers = {
 		[playerServerId] = true
 	}
@@ -216,7 +216,7 @@ exports('playerTargets', playerTargets)
 
 --- function playMicClicks
 ---plays the mic click if the player has them enabled.
----@param clickType boolean whether to play the 'on' or 'off' click. 
+---@param clickType boolean whether to play the 'on' or 'off' click.
 function playMicClicks(clickType)
 	if micClicks ~= 'true' then return logger.verbose("Not playing mic clicks because client has them disabled") end
 	-- TODO: Add customizable radio click volumes
@@ -242,6 +242,7 @@ function toggleMutePlayer(source)
 		MumbleSetVolumeOverrideByServerId(source, 0.0)
 	end
 end
+
 exports('toggleMutePlayer', toggleMutePlayer)
 
 --- function setVoiceProperty
@@ -260,6 +261,7 @@ function setVoiceProperty(type, value)
 		SetResourceKvp('pma-voice_enableMicClicks', val)
 	end
 end
+
 exports('setVoiceProperty', setVoiceProperty)
 -- compatibility
 exports('SetMumbleProperty', setVoiceProperty)

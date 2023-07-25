@@ -165,7 +165,6 @@ end
 RegisterCommand('+radiotalk', function()
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
 	if isDead() or LocalPlayer.state.disableRadio then return end
-
 	if not radioPressed and radioEnabled then
 		if radioChannel > 0 then
 			logger.info('[radio] Start broadcasting, update targets and notify server.')
@@ -194,6 +193,8 @@ RegisterCommand('+radiotalk', function()
 	end
 end, false)
 
+local usingGlobalRadio = false
+
 RegisterCommand('+radioglobaltalk', function()
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
 	if isDead() or LocalPlayer.state.disableRadio then return end
@@ -205,6 +206,7 @@ RegisterCommand('+radioglobaltalk', function()
 			playerTargets(LocalPlayer.state['global_radio'] or {}, MumbleIsPlayerTalking(PlayerId()) and callData or {})
 			TriggerServerEvent('pma-voice:setTalkingOnRadio', true, LocalPlayer.state['global_radio'])
 			radioPressed = true
+			usingGlobalRadio = true
 			playMicClicks(true)
 			if GetConvarInt('voice_enableRadioAnim', 0) == 1 and not (GetConvarInt('voice_disableVehicleRadioAnim', 0) == 1 and IsPedInAnyVehicle(PlayerPedId(), false)) and not disableRadioAnim then
 				RequestAnimDict('random@arrests')
@@ -237,7 +239,12 @@ RegisterCommand('-radiotalk', function()
 		if GetConvarInt('voice_enableRadioAnim', 0) == 1 then
 			StopAnimTask(PlayerPedId(), "random@arrests", "generic_radio_enter", -4.0)
 		end
-		TriggerServerEvent('pma-voice:setTalkingOnRadio', false)
+		if LocalPlayer.state['global_radio'] and usingGlobalRadio then
+			TriggerServerEvent('pma-voice:setTalkingOnRadio', false, LocalPlayer.state['global_radio'], true)
+			usingGlobalRadio = false
+		else
+			TriggerServerEvent('pma-voice:setTalkingOnRadio', false)
+		end
 	end
 end, false)
 if gameVersion == 'fivem' then

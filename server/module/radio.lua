@@ -128,13 +128,26 @@ end)
 
 --- syncs the player talking across all radio members
 ---@param talking boolean sets if the palyer is talking.
-function setTalkingOnRadio(talking, globalRadio)
+function setTalkingOnRadio(talking, globalRadio, reset)
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
+	local src = source
 	voiceData[source] = voiceData[source] or defaultTable(source)
 	local plyVoice = voiceData[source]
 	local radioTbl = radioData[plyVoice.radio]
-	if globalRadio and GlobalState['user_radio_' .. source] then
+	if not reset and globalRadio and GlobalState['user_radio_' .. source] then
 		radioTbl = globalRadio
+	end
+	if reset then
+		CreateThread(function()
+			for k, _ in pairs(globalRadio) do
+				local plyVoice = voiceData[k]
+				if plyVoice then
+					local radioTbl = radioData[plyVoice.radio]
+					TriggerClientEvent('pma-voice:syncRadioData', k, radioTbl, '')
+					TriggerClientEvent('pma-voice:setTalkingOnRadio', k, src, false)
+				end
+			end
+		end)
 	end
 	if radioTbl then
 		radioTbl[source] = talking
