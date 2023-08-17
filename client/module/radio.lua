@@ -202,6 +202,7 @@ RegisterCommand('+radioglobaltalk', function()
 	if not LocalPlayer.state['global_radio'] then return end
 	if not radioPressed and radioEnabled then
 		if radioChannel > 0 then
+			TriggerServerEvent('rcore_dispatch:server:speakingGlobal')
 			logger.info('[radio] Start broadcasting, update targets and notify server.')
 			playerTargets(LocalPlayer.state['global_radio'] or {}, MumbleIsPlayerTalking(PlayerId()) and callData or {})
 			TriggerServerEvent('pma-voice:setTalkingOnRadio', true, LocalPlayer.state['global_radio'])
@@ -240,6 +241,7 @@ RegisterCommand('-radiotalk', function()
 			StopAnimTask(PlayerPedId(), "random@arrests", "generic_radio_enter", -4.0)
 		end
 		if LocalPlayer.state['global_radio'] and usingGlobalRadio then
+			TriggerServerEvent('rcore_dispatch:server:cancelSpeakingGlobal')
 			TriggerServerEvent('pma-voice:setTalkingOnRadio', false, LocalPlayer.state['global_radio'], true)
 			usingGlobalRadio = false
 		else
@@ -250,6 +252,12 @@ end, false)
 if gameVersion == 'fivem' then
 	RegisterKeyMapping('+radiotalk', 'Talk over Radio', 'keyboard', GetConvar('voice_defaultRadio', 'LMENU'))
 end
+
+RegisterCommand('-radioglobaltalk', function()
+	ExecuteCommand('-radiotalk')
+end, false)
+
+RegisterKeyMapping('+radioglobaltalk', 'Change the global radio key', 'keyboard', 'Z')
 
 --- event syncRadio
 --- syncs the players radio, only happens if the radio was set server side.
